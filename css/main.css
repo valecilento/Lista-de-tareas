@@ -1,0 +1,64 @@
+*{
+   margin: 0;
+   padding: 0;
+   font-family: sans-serif;
+}
+.container{
+   background-color: rgba(49, 90, 122, 0.806);
+}
+h1{
+   padding: 1.5em;
+   font-family: Georgia, 'Times New Roman', Times, serif;
+   text-shadow: 1px 2px 5px rgba(138, 131, 131, 0.5);
+   display: flex;
+   justify-content: center;
+   letter-spacing: 1.5px;
+}
+.list{
+   padding: 25px;
+   background-color: rgb(164, 202, 196);
+   border-radius: 10px;
+}
+.date{
+   line-height: 1.7;
+   padding: 20px;
+   margin-bottom: 20px;
+   letter-spacing: 3px;
+}
+#dateLeft{
+   display: flex;
+   align-items: center;
+}
+#dateNumber{
+   font-size: 55px;
+}
+.form-container{
+   padding: 40px;
+}
+input{
+   padding: .40em;
+   border-radius: .5em;
+   border-style: none;
+}
+input:focus{
+   outline: none;
+}
+.btn{
+   padding: .25rem; 
+   font-size: .75rem;
+   border-radius: 35px;
+}
+.task{
+   background-color: rgb(140, 122, 148);
+   border-radius: 5px;
+   padding: 9px;
+   margin-bottom: 12px;
+}
+.done{
+   background-color: rgba(199, 197, 199, 0.726);
+   text-decoration: line-through;
+   color: rgb(104, 104, 102);
+}
+*:first-letter{
+   text-transform: capitalize;
+}  
