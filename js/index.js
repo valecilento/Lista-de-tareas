@@ -72,5 +72,3 @@ if(taskStorage){
    renderTask(taskStorage)
 }
 setDate()
-
-localStorage.clear()
