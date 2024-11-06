@@ -73,3 +73,4 @@ if(taskStorage){
 }
 setDate()
 
+localStorage.clear()
