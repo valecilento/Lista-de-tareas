@@ -9,8 +9,10 @@ const options = {
    day: "2-digit"
 }
 
-let taskStorage = localStorage.getItem('tareas')
-taskStorage = JSON.parse(taskStorage)
+if(localStorage.getItem('tareas')!== null){
+   taskStorage = localStorage.getItem('tareas')
+   taskStorage = JSON.parse(taskStorage)
+}
 
 let tasksContainer = document.getElementById ('tasksContainer') 
 
@@ -22,26 +24,78 @@ const setDate = () => {
 }
 
 const addNewTask = event => {
-   event.preventDefault() 
-   const {value} = event.target.taskText 
-   if (!value) return 
+   event.preventDefault() }
+   let lastId = 0;
+   taskStorage.forEach(task => {
+      if (task.id >= lastId){
+         lastId = task.id + 1
+      }
+   })
+   const taskObj = {
+      "id": lastId,
+      "tarea": event.target.taskText.value,
+      "date": event.target.taskDate.value,
+      "done": false
+   }
+   if (!taskObj.tarea) return 
+
    // armado del div vacio
    const task = document.createElement('div')
    task.classList.add('task')
-   const hecho = false
    task.addEventListener('click', changeTaskState)
+
    // agregar nodos
-   const fecha = new Date(document.getElementById("date-input").value).toLocaleDateString('es-AR', {timeZone: 'UTC'})
-   task.fecha = fecha.toLocaleString('es-AR', options)
-   task.textContent = value + ' ' + fecha
+   taskObj.date = new Date(document.getElementById("date-input").value).toLocaleDateString('es-AR', {timeZone: 'UTC'})
+   task.id = `${taskObj.id}`
+   task.innerHTML = `${taskObj.tarea} ${taskObj.date}`
    tasksContainer.prepend(task) 
-   arrayTask.push(value + ' ' + fecha)
-   localStorage.setItem('tareas', JSON.stringify(arrayTask))
+
+   taskStorage.push(taskObj)
+   localStorage.setItem('tareas', JSON.stringify(taskStorage))
    event.target.reset() 
-}
+
 const changeTaskState = event => {
    event.target.classList.toggle('done')
+   let taskId = event.target.id 
+   console.log(taskId) //borrar dsp
+   if (taskStorage[taskId].done) {
+      taskStorage[taskId].done = false
+   }else{
+      taskStorage[taskId].done = true
+   }
+   console.log(taskObj.done)
+   localStorage.setItem('tareas', JSON.stringify(taskStorage)) // guardo los datos modificados
 }
+
+const cargaFormulario = document.getElementById("cargaFormulario")
+cargaFormulario.addEventListener("submit", addNewTask)
+
+const eliminaTarea = event => {
+   let allTasksHTML = tasksContainer.getElementsByTagName('*')
+   let listTask = taskStorage.filter((tarea, i) => {
+      taskElement = allTasksHTML[i];
+      if(taskElement && taskElement.classList.contains('done')){
+         // tasksContainer.removeChild(taskElement)
+         return false
+      }
+      return true
+   })
+   console.log(listTask)
+   localStorage.setItem('tareas', JSON.stringify(listTask))
+   tasksContainer.innerHTML=""
+   renderTask(listTask)
+}
+
+const btnElimina = document.getElementById("btnElimina")
+btnElimina.addEventListener('click', eliminaTarea)
+
+const limpiaTareas = () => {
+   cargaFormulario.reset
+   localStorage.clear()
+   taskStorage = []
+   tasksContainer.innerHTML = ""
+} 
+btnLimpia.addEventListener('click', limpiaTareas)
 
 const order = () => {
    const done = []
@@ -58,17 +112,24 @@ const order = () => {
 const renderOrderedTasks = () => {
    order().forEach(el => tasksContainer.appendChild(el))
 }
+const btnOrdena = document.getElementById("btnOrdena")
+btnOrdena.addEventListener("click", renderOrderedTasks)
 
+function renderTask (arrayTask) {
+   arrayTask.forEach(task => {
+      const tareasDiv = document.createElement('div')
+      tareasDiv.classList.add('task')
+      tareasDiv.id = `${task.id}`
+      tareasDiv.addEventListener('click', changeTaskState)
+      tareasDiv.textContent = `${task.tarea} ${task.date}`
+      tasksContainer.appendChild(tareasDiv)
+   })
+}
+   
 if(taskStorage){
-   function renderTask (arrayTask) {
-      arrayTask.forEach(task => {
-         const tareasDiv = document.createElement('div')
-         tareasDiv.classList.add('task')
-         tareasDiv.addEventListener('click', changeTaskState)
-         tareasDiv.textContent = `${task}`
-         tasksContainer.appendChild(tareasDiv)
-      })
-   }
    renderTask(taskStorage)
 }
 setDate()
+
+//const filtered = taskStorage.filter(tarea => tarea.id !== taskId)
+//localStorage.setItem('tareas', JSON.stringify(filtered))

@@ -24,11 +24,13 @@
             </div>
          </div>
       </div>
-      <form onsubmit="addNewTask(event)" class="col-sm-9 form-container">
+      <form id="cargaFormulario"  class="col-sm-9 form-container">
          <input type="text" name="taskText" autocomplete="off" placeholder="Nueva tarea">
          <input type="date" required  name="taskDate" id= "date-input" autocomplete="off" min="2024-10-25" max="2025-12-25">
          <button type ="submit" class="addTaskButton btn btn-success rounded-5">+</button>
-         <button type="button" class="orderButton btn btn-success" onclick="renderOrderedTasks()">Ordenar tareas realizadas</button>
+         <button type="button" id="btnOrdena" class="orderButton btn btn-success">Ordenar tareas realizadas</button>
+         <button type="button" id="btnElimina" class="orderButton btn btn-success">Elimina tarea</button>
+         <button type="button" id="btnLimpia" class="orderButton btn btn-success">Limpia lista de tareas</button>
       </form>
       <div id="tasksContainer"></div>
    </div>
