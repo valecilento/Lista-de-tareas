@@ -2,7 +2,8 @@ const dateNumber = document.getElementById('dateNumber')
 const dateMonth = document.getElementById('dateMonth')
 const dateYear = document.getElementById('dateYear')
 const dateTask = document.getElementById("date-input")
-const arrayTask = []
+let tasksContainer = document.getElementById ('tasksContainer') 
+let taskStorage = []
 const options = {
    year: "numeric",
    month: "2-digit",
@@ -14,7 +15,38 @@ if(localStorage.getItem('tareas')!== null){
    taskStorage = JSON.parse(taskStorage)
 }
 
-let tasksContainer = document.getElementById ('tasksContainer') 
+const geoSuccess = (pos) => {
+   let lat = pos.coords.latitude
+   let lon = pos.coords.longitude
+   const apiOpenWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=00f9c6f5fc71e26725f9c229f684239f&units=metric`
+   fetch(apiOpenWeather)
+      .then(response => response.json())
+      .then(data => {
+         let climaDiv = document.getElementById("clima")
+         let climaDivInfo = document.createElement('div')
+         climaDivInfo.innerHTML = `<p>Ciudad: ${data.name}</p>
+                                    <p>Temperatura: ${Math.round(data.main.temp)}°C</p>
+                                    <p>RealFeel: ${Math.round(data.main.feels_like)}°C</p>`
+         climaDiv.append(climaDivInfo)
+         console.log(data)
+      }) 
+
+   console.log("lat: " +lat+" - lon: "+lon)
+}
+
+const geoError = () => {
+   console.error("Ubicacion no está soportado en el browser o se rechazaron los permisos.")
+}
+
+try {
+   if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(geoSuccess,geoError)
+   }else{
+      alert("Geolocation no esta soportado")
+   }
+} catch (error) {
+   console.error(error)
+}
 
 const setDate = () => {
    const date = new Date()
@@ -24,7 +56,7 @@ const setDate = () => {
 }
 
 const addNewTask = event => {
-   event.preventDefault() }
+   event.preventDefault() 
    let lastId = 0;
    taskStorage.forEach(task => {
       if (task.id >= lastId){
@@ -49,21 +81,20 @@ const addNewTask = event => {
    task.id = `${taskObj.id}`
    task.innerHTML = `${taskObj.tarea} ${taskObj.date}`
    tasksContainer.prepend(task) 
-
    taskStorage.push(taskObj)
    localStorage.setItem('tareas', JSON.stringify(taskStorage))
    event.target.reset() 
+}
 
 const changeTaskState = event => {
    event.target.classList.toggle('done')
    let taskId = event.target.id 
-   console.log(taskId) //borrar dsp
-   if (taskStorage[taskId].done) {
-      taskStorage[taskId].done = false
+   let taskIndex = taskStorage.findIndex(task => task.id == taskId)
+   if (taskStorage[taskIndex].done) {
+      taskStorage[taskIndex].done = false
    }else{
-      taskStorage[taskId].done = true
+      taskStorage[taskIndex].done = true
    }
-   console.log(taskObj.done)
    localStorage.setItem('tareas', JSON.stringify(taskStorage)) // guardo los datos modificados
 }
 
@@ -71,21 +102,30 @@ const cargaFormulario = document.getElementById("cargaFormulario")
 cargaFormulario.addEventListener("submit", addNewTask)
 
 const eliminaTarea = event => {
-   let allTasksHTML = tasksContainer.getElementsByTagName('*')
-   let listTask = taskStorage.filter((tarea, i) => {
-      taskElement = allTasksHTML[i];
-      if(taskElement && taskElement.classList.contains('done')){
-         // tasksContainer.removeChild(taskElement)
-         return false
+   Swal.fire({
+      title: "Desea eliminar las tareas realizadas?",
+      showDenyButton: true,
+      confirmButtonText: "Eliminar todas",
+      denyButtonText: "Cancelar"
+   }).then((result) => {
+      if(result.isConfirmed){
+         let listTask = taskStorage.filter((task) => {
+            if(task.done){
+               return false
+            }
+            return true
+         })
+         taskStorage = listTask
+         localStorage.setItem('tareas', JSON.stringify(taskStorage))
+         tasksContainer.innerHTML=""
+         renderTask(taskStorage)
+         Swal.fire("Se eliminaron las tareas realizadas!")
       }
-      return true
    })
-   console.log(listTask)
-   localStorage.setItem('tareas', JSON.stringify(listTask))
-   tasksContainer.innerHTML=""
-   renderTask(listTask)
 }
+const confirmaElimina = () =>{
 
+}
 const btnElimina = document.getElementById("btnElimina")
 btnElimina.addEventListener('click', eliminaTarea)
 
@@ -131,5 +171,5 @@ if(taskStorage){
 }
 setDate()
 
-//const filtered = taskStorage.filter(tarea => tarea.id !== taskId)
-//localStorage.setItem('tareas', JSON.stringify(filtered))
+
+
