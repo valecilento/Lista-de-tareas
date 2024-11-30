@@ -12,10 +12,8 @@ const geoSuccess = (pos) => {
                                     <p>Temperatura: ${Math.round(data.main.temp)}°C</p>
                                     <p>Sensación térmica: ${Math.round(data.main.feels_like)}°C</p>`
          climaDiv.append(climaDivInfo)
-         console.log(data)
       }) 
 
-   console.log("lat: " +lat+" - lon: "+lon)
 }
 
 const geoError = () => {
