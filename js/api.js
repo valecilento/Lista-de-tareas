@@ -10,7 +10,7 @@ const geoSuccess = (pos) => {
          let climaDivInfo = document.createElement('div')
          climaDivInfo.innerHTML = `<p>Ciudad: ${data.name}</p>
                                     <p>Temperatura: ${Math.round(data.main.temp)}°C</p>
-                                    <p>RealFeel: ${Math.round(data.main.feels_like)}°C</p>`
+                                    <p>Sensación térmica: ${Math.round(data.main.feels_like)}°C</p>`
          climaDiv.append(climaDivInfo)
          console.log(data)
       }) 
